@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books API Management System</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .section:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95em;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .book-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .book-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            line-height: 1.4;
+        }
+
+        .book-info p {
+            margin-bottom: 8px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .book-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .search-filter {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-filter h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            max-width: 400px;
+            word-wrap: break-word;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+        
+        .toast.error {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .api-reference {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.95em;
+            }
+            
+            .nav-tabs {
+                padding: 0 10px;
+                gap: 5px;
+            }
+            
+            .nav-tab {
+                padding: 12px 15px;
+                font-size: 13px;
+                min-width: 80px;
+            }
+            
+            .tab-content {
+                padding: 20px 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-card i {
+                font-size: 2em;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.5em;
+            }
+            
+            .two-column,
+            .filter-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .book-card {
+                padding: 15px;
+            }
+            
+            .book-card h4 {
+                font-size: 1.1em;
+            }
+            
+            .book-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .book-actions button {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .section {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .section h3 {
+                font-size: 1.2em;
+            }
+            
+            input,
+            textarea,
+            select {
+                padding: 14px 12px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 14px 20px;
+                font-size: 14px;
+                min-height: 48px;
+            }
+            
+            .search-filter {
+                padding: 15px;
+            }
+            
+            .response {
+                font-size: 12px;
+                max-height: 250px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .button-group button {
+                width: 100%;
+            }
+            
+            .toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100px);
+            }
+            
+            .toast.show {
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .nav-tab {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .book-card h4 {
+                font-size: 1em;
+            }
+            
+            .section h3 {
+                font-size: 1.1em;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            button:hover {
+                transform: none;
+            }
+            
+            .book-card:hover {
+                transform: none;
+            }
+            
+            .section:hover {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 768px) and (orientation: landscape) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-book"></i> Books API Management System</h1>
+            <p>Complete CRUD operations with modern interface and real-time statistics</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i>
+                Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('manage')"><i class="fas fa-edit"></i> Manage Books</button>
+            <button class="nav-tab" onclick="switchTab('bulk')"><i class="fas fa-layer-group"></i> Bulk
+                Operations</button>
+            <button class="nav-tab" onclick="switchTab('api')"><i class="fas fa-code"></i> API Testing</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-book"></i>
+                    <h3 id="totalBooks">0</h3>
+                    <p>Total Books</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-user-edit"></i>
+                    <h3 id="totalAuthors">0</h3>
+                    <p>Unique Authors</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar"></i>
+                    <h3 id="latestYear">-</h3>
+                    <p>Latest Publication</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-history"></i>
+                    <h3 id="oldestYear">-</h3>
+                    <p>Oldest Publication</p>
+                </div>
+            </div>
+
+            <div class="search-filter">
+                <h4><i class="fas fa-search"></i> Search & Filter Books</h4>
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="searchTitle">Search by Title</label>
+                        <input type="text" id="searchTitle" placeholder="Enter title to search..."
+                            oninput="filterBooks()">
+                    </div>
+                    <div class="form-group">
+                        <label for="searchAuthor">Search by Author</label>
+                        <input type="text" id="searchAuthor" placeholder="Enter author to search..."
+                            oninput="filterBooks()">
+                    </div>
+                    <div class="form-group">
+                        <label for="yearFilter">Filter by Year</label>
+                        <select id="yearFilter" onchange="filterBooks()">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button onclick="clearFilters()" class="btn-warning"><i class="fas fa-times"></i> Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3><i class="fas fa-list"></i> Books Library</h3>
+                <div class="button-group" style="margin-bottom: 20px;">
+                    <button onclick="getAllBooks()" class="btn-success"><i class="fas fa-sync"></i> Refresh
+                        Books</button>
+                    <button onclick="exportBooks()" class="btn-warning"><i class="fas fa-download"></i> Export
+                        JSON</button>
+                </div>
+                <div id="booksGrid" class="books-grid"></div>
+            </div>
+        </div>
+
+        <!-- Manage Books Tab -->
+        <div id="manage" class="tab-content">
+            <div class="two-column">
+                <div class="section">
+                    <h3><i class="fas fa-plus"></i> Add New Book</h3>
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" placeholder="Enter book title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" placeholder="Enter author name">
+                    </div>
+                    <div class="form-group">
+                        <label for="publishedYear">Published Year</label>
+                        <input type="number" id="publishedYear" placeholder="Enter year" min="1000" max="2030">
+                    </div>
+                    <button onclick="addSingleBook()"><i class="fas fa-plus"></i> Add Book</button>
+                    <div id="addBookResponse" class="response" style="display: none;"></div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-edit"></i> Update Book</h3>
+                    <div class="form-group">
+                        <label for="updateId">Book ID *</label>
+                        <input type="text" id="updateId" placeholder="Enter book ID to update">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTitle">New Title</label>
+                        <input type="text" id="updateTitle" placeholder="Enter new title">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateAuthor">New Author</label>
+                        <input type="text" id="updateAuthor" placeholder="Enter new author">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateYear">New Year</label>
+                        <input type="number" id="updateYear" placeholder="Enter new year" min="1000" max="2030">
+                    </div>
+                    <button onclick="updateBook()"><i class="fas fa-save"></i> Update Book</button>
+                    <div id="updateResponse" class="response" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Operations Tab -->
+        <div id="bulk" class="tab-content">
+            <div class="section">
+                <h3><i class="fas fa-layer-group"></i> Bulk Add Books</h3>
+                <div class="form-group">
+                    <label for="bulkBooks">Books JSON Array</label>
+                    <textarea id="bulkBooks" rows="12" placeholder='[
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "publishedYear": 1925
+  },
+  {
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "publishedYear": 1960
+  }
+]'>
+</textarea>
+                </div>
+                <div class="button-group">
+                    <button onclick="addMultipleBooks()"><i class="fas fa-upload"></i> Add Multiple Books</button>
+                    <button onclick="loadSampleData()" class="btn-warning"><i class="fas fa-magic"></i> Load Sample
+                        Data</button>
+                    <button onclick="validateJSON()" class="btn-success"><i class="fas fa-check"></i> Validate
+                        JSON</button>
+                </div>
+                <div id="bulkResponse" class="response" style="display: none;"></div>
+            </div>
+
+            <div class="two-column">
+                <div class="section">
+                    <h3><i class="fas fa-file-import"></i> Import from File</h3>
+                    <div class="form-group">
+                        <label for="fileInput">Select JSON File</label>
+                        <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
+                    </div>
+                    <div id="fileImportResponse" class="response" style="display: none;"></div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-trash-alt"></i> Danger Zone</h3>
+                    <p style="color: #e74c3c; margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i> This
+                        will delete ALL books from the database!</p>
+                    <button onclick="deleteAllBooks()" class="btn-danger"><i class="fas fa-trash"></i> Delete All
+                        Books</button>
+                    <div id="deleteAllResponse" class="response" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Testing Tab -->
+        <div id="api" class="tab-content">
+            <div class="two-column">
+                <div class="section">
+                    <h3><i class="fas fa-search"></i> Get Single Book</h3>
+                    <div class="form-group">
+                        <label for="bookId">Book ID</label>
+                        <input type="text" id="bookId" placeholder="Enter book ID">
+                    </div>
+                    <button onclick="getSingleBook()"><i class="fas fa-search"></i> Get Book</button>
+                    <div id="singleBookResponse" class="response" style="display: none;"></div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-trash"></i> Delete Single Book</h3>
+                    <div class="form-group">
+                        <label for="deleteId">Book ID</label>
+                        <input type="text" id="deleteId" placeholder="Enter book ID to delete">
+                    </div>
+                    <button onclick="deleteSingleBook()" class="btn-danger"><i class="fas fa-trash"></i> Delete
+                        Book</button>
+                    <div id="deleteResponse" class="response" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3><i class="fas fa-code"></i> API Endpoints Reference</h3>
+                <div class="api-reference">
+                    <p><strong>GET</strong> /books - Get all books</p>
+                    <p><strong>GET</strong> /books/:id - Get book by ID</p>
+                    <p><strong>POST</strong> /books - Create book(s)</p>
+                    <p><strong>PUT</strong> /books/:id - Update book</p>
+                    <p><strong>DELETE</strong> /books/:id - Delete book</p>
+                    <p><strong>DELETE</strong> /books - Delete all books</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

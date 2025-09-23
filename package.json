@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "main": "book.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --detectOpenHandles --forceExit",
+    "test:unit": "jest book.test.js --detectOpenHandles --forceExit",
+    "test:integration": "jest server.test.js server.integration.test.js --detectOpenHandles --forceExit",
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +20,10 @@
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "mongoose": "^8.18.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "mongodb-memory-server": "^9.1.3"
   }
 }
