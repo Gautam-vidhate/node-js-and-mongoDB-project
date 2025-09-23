@@ -9,7 +9,12 @@
     "test:unit": "jest book.test.js --detectOpenHandles --forceExit",
     "test:integration": "jest server.test.js server.integration.test.js --detectOpenHandles --forceExit",
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "docker:build": "docker build -t books-api .",
+    "docker:run": "docker run -p 3000:3000 books-api",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "keywords": [],
   "author": "",
