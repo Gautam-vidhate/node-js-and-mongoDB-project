@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # MongoDB Database for Development
+  mongodb-dev:
+    image: mongo:7.0
+    container_name: books-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: booksdb_dev
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - books-dev-network
+
+  # Books API Application for Development
+  books-api-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: books-api-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      MONGODB_URI: mongodb://mongodb-dev:27017/booksdb_dev
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb-dev
+    networks:
+      - books-dev-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  mongodb_dev_data:
+
+networks:
+  books-dev-network:
+    driver: bridge

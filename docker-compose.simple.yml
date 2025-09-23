@@ -1,0 +1,13 @@
+services:
+  # Books API Application only
+  books-api:
+    build: .
+    container_name: books-api-simple
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGODB_URI: mongodb://host.docker.internal:27017/booksdb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
