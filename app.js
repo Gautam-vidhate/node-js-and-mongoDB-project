@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const Book = require('./book');
 
 const createApp = () => {
@@ -19,10 +20,18 @@ const createApp = () => {
     
     app.use(express.json());
     app.use(express.static('public'));
+    
+    // Serve React build files
+    app.use(express.static(path.join(__dirname, 'frontend/build')));
 
     // Serve index.html at root
     app.get('/', (req, res) => {
         res.sendFile('index.html', { root: 'public' });
+    });
+    
+    // Serve React app for non-API routes
+    app.get('/react', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
     });
 
     app.get('/books', async (req, res) => {
